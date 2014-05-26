@@ -7,7 +7,7 @@ NotiPis.
 
 This project tries to solve three central problems:
 
-1. **proxy**: take the load off various websites which today has to serve a lot
+1. **aggregator**: take the load off various websites which today has to serve a lot
 of content to an increasingly big number of Notifiers (clients).
 
 2. **parser**: websites which distributes data in unfriendly formats (html, text etc.)
