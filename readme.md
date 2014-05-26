@@ -5,7 +5,7 @@ NotiPis.
 
 ![alt text](wireframe.jpg)
 
-The project tries to solve three central problems:
+This project tries to solve three central problems:
 
 1. **proxy**: take the load off various websites which today has to serve a lot
 of content to an increasingly big number of Notifiers (clients).
@@ -23,4 +23,8 @@ anyone who wants to develop apps, websites or scripts. Documentation will follow
 
 ### References
 [Notiwire (Python)](https://github.com/appKom/notiwire/commits/master)
-by @michaeljohansen, @cXhristian & @lizter
+by [@michaeljohansen], [@cXhristian] & [@lizter].
+
+[@michaeljohansen]: http://github.com/michaeljohansen "Michael Johansen"
+[@cXhristian]: http://github.com/cXhristian "Christian Duvholt"
+[@lizter]: http://github.com/lizter "Christian Strand Young"
