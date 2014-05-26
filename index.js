@@ -1,10 +1,37 @@
-var express = require('express');
-var app = express();
+/**
+ * Notiwire
+ */
+var express = require('express'),
+    request = require('request'),
+    cheerio = require('cheerio'),
+    app = express();
 
-app.get('/', function(req, res){
-  res.send('Hello World');
+var config = {
+
+    database: {
+
+    },
+
+    notiwire: {
+        api: '/api/' + 'v1',
+        port: '1337'
+    }
+}
+
+
+app.param('affiliate', function(req, res, next, affiliate) {
+     // Validate affiliate and key
+     if (true) next();
 });
 
-var server = app.listen(3000, function() {
-    console.log('Listening on port %d', server.address().port);
+app.get(config.notiwire.api + '/:affiliate/light', function (req, res) {
+
+});
+
+app.get(config.notiwire.api + '/:affiliate/coffee', function (req, res) {
+
+});
+
+var server = app.listen(config.notiwire.port, function() {
+    console.log('[Notiwire]: Running on port %d', server.address().port);
 });
