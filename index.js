@@ -2,7 +2,8 @@
  * Notiwire
  * - A proxy between Notifiers and NotiPis
  */
-var cradle     = require ('cradle'),
+var hat        = require ('hat'),
+    cradle     = require ('cradle'),
     winston    = require ('winston'),
     express    = require ('express'),
     request    = require ('request'),
@@ -13,21 +14,12 @@ var cradle     = require ('cradle'),
     config     = require ('./configuration'),
     app        = express ();
 
-// CouchDB
+/* CouchDB */
 cradle.setup(config.database.cradle);
 var con = new (cradle.Connection);
 var db  = con.database(config.database.name);
 
-// Logging
-app.use(expWinston.errorLogger({
-    transports: [
-        new winston.transports.File({
-            filename: config.logging.path,
-            json: true
-        })
-    ]
-}));
-
+/* Logging */
 winston.add(winston.transports.File, {
     filename: config.logging.path
 });
@@ -48,23 +40,40 @@ app.get('/', function (req, res) {
  * post api/v1/online/coffee value (int)
  */
 app.param('affiliate', function (req, res, next, affiliate) {
-     var key = req.headers['X-api-key'] || undefined;
+    var apiKey = req.headers['x-api-key'] || undefined;
 
-     if (key !== undefined)
-         return next();
-     else {
-         var err = new Error ('Invalid api-key.');
-         err.status = 401;
-         return next(err);
-     }
+    if (apiKey === undefined)
+        return next(new Error("You must provide an api key."));
+
+    db.view('affiliates/getAllByApiKey', {key: apiKey},
+        function (err, affiliate) {
+            if (err)
+                return next(new Error ("Database issues, try again later!"));
+            else if (affiliate[0]) {
+                req.affiliate = affiliate[0];
+                return next();
+            }
+            else
+                return next(new Error ("Invalid api key!"));
+     });
 });
 
-app.get(config.notiwire.api + '/:affiliate/light', function (err, req, res) {
-
+app.get(config.notiwire.api + '/:affiliate/light', function (req, res) {
+    res.json(200, {
+        success: true,
+        message: "Successfully received light update.",
+        light: 85, // debug value
+        affiliate: req.affiliate.value.name
+    });
 });
 
 app.post(config.notiwire.api + '/:affiliate/coffee', function (req, res) {
-
+    res.json(200, {
+        success: true,
+        message: "Successfully received coffee update.",
+        coffeePots: 2, // debug value
+        affiliate: req.affiliate.value.name
+    });
 });
 
 /**
@@ -85,7 +94,8 @@ app.get(config.notiwire.api + '/news/:resource', function (req, res) {
  * - Starts webserver.
  */
 var server = app.listen(config.notiwire.port, function () {
-    winston.log('success', 'Notiwire Running on port %d', server.address().port);
+    winston.log('success', 'Notiwire Running on port %d',
+        server.address().port);
 });
 
 /**
@@ -93,8 +103,10 @@ var server = app.listen(config.notiwire.port, function () {
  * - Pipes Express errors to client as json
  */
 app.use(function(err, req, res, next){
-  //winston.log('error', err.message);
-  res.json(err.status, {
-    error: err.message
-  });
+  if (err) {
+      res.json(401, {message: err.message});
+      winston.log('error', err.message);
+  }
+  else
+      next();
 });
