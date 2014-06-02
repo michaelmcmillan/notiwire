@@ -2,7 +2,8 @@
  * Notiwire
  * - A proxy between Notifiers and NotiPis
  */
-var winston    = require ('winston'),
+var cradle     = require ('cradle'),
+    winston    = require ('winston'),
     express    = require ('express'),
     request    = require ('request'),
     cheerio    = require ('cheerio'),
@@ -11,6 +12,11 @@ var winston    = require ('winston'),
     affiliate  = require ('./affiliate'),
     config     = require ('./configuration'),
     app        = express ();
+
+// CouchDB
+cradle.setup(config.database.cradle);
+var con = new (cradle.Connection);
+var db  = con.database(config.database.name);
 
 // Logging
 app.use(expWinston.errorLogger({
@@ -31,7 +37,7 @@ winston.add(winston.transports.File, {
  * - A splash for clients who visit root
  */
 app.get('/', function (req, res) {
-    res.send('Notiwire 0.0.1');
+    res.send('Notiwire ' + config.notiwire.version);
 });
 
 /**
@@ -61,14 +67,6 @@ app.post(config.notiwire.api + '/:affiliate/coffee', function (req, res) {
 
 });
 
-// Error handling
-app.use(function(err, req, res, next){
-  winston.log('error', err.message);
-  res.json(err.status, {
-    error: err.message
-  });
-});
-
 /**
  * Aggregator
  * - Returns data from websites in json
@@ -79,10 +77,24 @@ app.use(function(err, req, res, next){
  * get api/v1/news/sit.no
  */
 app.get(config.notiwire.api + '/news/:resource', function (req, res) {
-    
+
 });
 
-// Boot server
+/**
+ * Webserver
+ * - Starts webserver.
+ */
 var server = app.listen(config.notiwire.port, function () {
     winston.log('success', 'Notiwire Running on port %d', server.address().port);
+});
+
+/**
+ * Error handling
+ * - Pipes Express errors to client as json
+ */
+app.use(function(err, req, res, next){
+  //winston.log('error', err.message);
+  res.json(err.status, {
+    error: err.message
+  });
 });
