@@ -8,14 +8,12 @@ var hat        = require ('hat'),
     express    = require ('express'),
     request    = require ('request'),
     cheerio    = require ('cheerio'),
+    socket.io  = require ('socket.io'),
     expWinston = require ('express-winston'),
 
     affiliate  = require ('./affiliate'),
     config     = require ('./configuration'),
     app        = express ();
-
-/* Live reloading */
-//livereload(app, config={});
 
 /* CouchDB */
 cradle.setup(config.database.cradle);
@@ -61,11 +59,12 @@ app.param('affiliate', function (req, res, next, affiliate) {
      });
 });
 
-app.get(config.notiwire.api + '/:affiliate/light', function (req, res) {
+app.post(config.notiwire.api + '/:affiliate/light', function (req, res) {
+
     res.json (200, {
         success: true,
         message: "Successfully received light update.",
-        light: 85, // debug value
+        light: 85,
         affiliate: req.affiliate.value.name
     });
 });
@@ -106,8 +105,6 @@ var server = app.listen(config.notiwire.port, function () {
  * - Pipes Express errors to client as json
  */
 app.use(function(err, req, res, next){
-  console.log(err);
-
   if (err) {
       res.json(err.status, {message: err.msg});
       winston.log('error', err.status + ': ' + err.msg);
