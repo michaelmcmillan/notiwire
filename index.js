@@ -14,6 +14,9 @@ var hat        = require ('hat'),
     config     = require ('./configuration'),
     app        = express ();
 
+/* Live reloading */
+//livereload(app, config={});
+
 /* CouchDB */
 cradle.setup(config.database.cradle);
 var con = new (cradle.Connection);
@@ -59,7 +62,7 @@ app.param('affiliate', function (req, res, next, affiliate) {
 });
 
 app.get(config.notiwire.api + '/:affiliate/light', function (req, res) {
-    res.json(200, {
+    res.json (200, {
         success: true,
         message: "Successfully received light update.",
         light: 85, // debug value
@@ -68,7 +71,7 @@ app.get(config.notiwire.api + '/:affiliate/light', function (req, res) {
 });
 
 app.post(config.notiwire.api + '/:affiliate/coffee', function (req, res) {
-    res.json(200, {
+    res.json (200, {
         success: true,
         message: "Successfully received coffee update.",
         coffeePots: 2, // debug value

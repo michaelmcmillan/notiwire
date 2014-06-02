@@ -21,6 +21,17 @@ job to handle incoming data. Examples will follow.
 Due to the nature of appKom we hope that Notiwire can serve useful data to
 anyone who wants to develop apps, websites or scripts. Documentation will follow.
 
+### Contribute
+Running your own Notiwire is a breeze - much thanks to npm!
+```bash
+git clone https://github.com/michaelmcmillan/notiwire.git
+npm install
+node index.js
+```
+
+Check out the [issues](https://github.com/michaelmcmillan/notiwire/issues) to see
+what needs fixing or implementing.
+
 ### References
 [Notiwire (Python)](https://github.com/appKom/notiwire/commits/master)
 by [@michaeljohansen], [@cXhristian] & [@lizter].
