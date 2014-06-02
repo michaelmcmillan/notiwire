@@ -1,1 +1,3 @@
+.gitingore
 node_modules
+logs/notiwire.log

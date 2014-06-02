@@ -55,8 +55,6 @@ app.param('affiliate', function (req, res, next, affiliate) {
 
 app.get(config.notiwire.api + '/:affiliate/light', function (err, req, res) {
 
-
-
 });
 
 app.post(config.notiwire.api + '/:affiliate/coffee', function (req, res) {
@@ -81,7 +79,7 @@ app.use(function(err, req, res, next){
  * get api/v1/news/sit.no
  */
 app.get(config.notiwire.api + '/news/:resource', function (req, res) {
-
+    
 });
 
 // Boot server

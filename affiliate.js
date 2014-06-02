@@ -5,7 +5,7 @@
 function Affiliate (id) {
     this.id;
     this.name;
-    this.apikey;
+    this.apiKey;
 }
 
 module.exports = Affiliate;
