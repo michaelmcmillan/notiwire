@@ -26,7 +26,7 @@ winston.add(winston.transports.File, {
 
 /**
  * Splash
- * - A splash for clients who visit root
+ * - An unimpressive splash for clients who visit root
  */
 app.get('/', function (req, res) {
     res.send('Notiwire ' + config.notiwire.version);
@@ -43,18 +43,18 @@ app.param('affiliate', function (req, res, next, affiliate) {
     var apiKey = req.headers['x-api-key'] || undefined;
 
     if (apiKey === undefined)
-        return next(new Error("You must provide an api key."));
+        return next(new Error ({status: 500, msg: "You must provide an api key."}));
 
     db.view('affiliates/getAllByApiKey', {key: apiKey},
         function (err, affiliate) {
             if (err)
-                return next(new Error ("Database issues, try again later!"));
+                return next({status: 500, msg: "Database error, try again."});
             else if (affiliate[0]) {
                 req.affiliate = affiliate[0];
                 return next();
             }
             else
-                return next(new Error ("Invalid api key!"));
+        return next({status: 401, msg: "Invalid API key."});
      });
 });
 
@@ -103,9 +103,11 @@ var server = app.listen(config.notiwire.port, function () {
  * - Pipes Express errors to client as json
  */
 app.use(function(err, req, res, next){
+  console.log(err);
+
   if (err) {
-      res.json(401, {message: err.message});
-      winston.log('error', err.message);
+      res.json(err.status, {message: err.msg});
+      winston.log('error', err.status + ': ' + err.msg);
   }
   else
       next();
