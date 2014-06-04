@@ -3,22 +3,25 @@
  * - A proxy between Notifiers and NotiPis
  */
 var hat        = require ('hat'),
-    cradle     = require ('cradle'),
+    mongoose   = require ('mongoose');
     winston    = require ('winston'),
     express    = require ('express'),
     request    = require ('request'),
     cheerio    = require ('cheerio'),
-    socket.io  = require ('socket.io'),
+    socket     = require ('socket.io'),
     expWinston = require ('express-winston'),
 
     affiliate  = require ('./affiliate'),
     config     = require ('./configuration'),
     app        = express ();
 
-/* CouchDB */
-cradle.setup(config.database.cradle);
-var con = new (cradle.Connection);
-var db  = con.database(config.database.name);
+/* MongoDB */
+mongoose.connect('mongodb://localhost/test');
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function callback () {
+    console.log('Connection successful!');
+});
 
 /* Logging */
 winston.add(winston.transports.File, {
@@ -46,7 +49,7 @@ app.param('affiliate', function (req, res, next, affiliate) {
     if (apiKey === undefined)
         return next(new Error ({status: 500, msg: "You must provide an api key."}));
 
-    db.view('affiliates/getAllByApiKey', {key: apiKey},
+    /*db.view('affiliates/getAllByApiKey', {key: apiKey},
         function (err, affiliate) {
             if (err)
                 return next({status: 500, msg: "Database error, try again."});
@@ -57,15 +60,16 @@ app.param('affiliate', function (req, res, next, affiliate) {
             else
         return next({status: 401, msg: "Invalid API key."});
      });
+     */
+     next();
 });
 
 app.post(config.notiwire.api + '/:affiliate/light', function (req, res) {
-
     res.json (200, {
         success: true,
         message: "Successfully received light update.",
         light: 85,
-        affiliate: req.affiliate.value.name
+        //affiliate: req.affiliate.value.name
     });
 });
 
@@ -73,8 +77,8 @@ app.post(config.notiwire.api + '/:affiliate/coffee', function (req, res) {
     res.json (200, {
         success: true,
         message: "Successfully received coffee update.",
-        coffeePots: 2, // debug value
-        affiliate: req.affiliate.value.name
+        coffeePots: 2,
+        //affiliate: req.affiliate.value.name
     });
 });
 

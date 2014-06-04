@@ -26,4 +26,4 @@ var db  = con.database(config.database.name);
 
 db.view('affiliates/getAllByApiKey', {key: '21caa19142e609e80c1780048204ed12'}, function (err, doc) {
       console.log(doc);
-  });
+ });

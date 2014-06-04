@@ -26,6 +26,7 @@
     "cradle": "~0.6.7",
     "hat": "0.0.3",
     "express-livereload": "0.0.24",
-    "socket.io": "~1.0.3"
+    "socket.io": "~1.0.3",
+    "mongoose": "~3.8.8"
   }
 }
